@@ -132,6 +132,26 @@ module DataMapper
         aggregate(query.merge(:fields => [ property_name.sum ]))
       end
 
+      # Get the distinct group concat of a field
+      #
+      # @example the list of all ages
+      #   Friend.group_concat(:age)
+      #
+      # @example the total age of all female friends
+      #   Friend.group_concat(:age, :conditions => [ 'gender = ?', 'female' ])
+      #
+      # @param property [Symbol] the property you wish to get the total value of
+      # @param  opts [Hash, Symbol] the conditions
+      #
+      # @return [String] return distinct conat of the property (order by the property)
+      #
+      # @api public
+      def group_concat(*args)
+        query         = args.last.kind_of?(::Hash) ? args.pop : {}
+        property_name = args.first
+        aggregate(query.merge(:fields => [ property_name.group_concat ]))
+      end
+
       # Perform aggregate queries
       #
       # @example the count of friends

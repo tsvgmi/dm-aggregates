@@ -61,6 +61,10 @@ module DataMapper
         property.load(value)
       end
 
+      def group_concat(property, value)
+        property.load(value)
+      end
+
       chainable do
         def property_to_column_name(property, qualify)
           case property
@@ -84,15 +88,20 @@ module DataMapper
         end
 
         function_name = case aggregate_function
-          when :count then 'COUNT'
-          when :min   then 'MIN'
-          when :max   then 'MAX'
-          when :avg   then 'AVG'
-          when :sum   then 'SUM'
+          when :count        then 'COUNT'
+          when :min          then 'MIN'
+          when :max          then 'MAX'
+          when :avg          then 'AVG'
+          when :group_concat then 'GROUP_CONCAT'
+          when :sum          then 'SUM'
           else raise "Invalid aggregate function: #{aggregate_function.inspect}"
         end
 
-        "#{function_name}(#{column_name})"
+        if aggregate_function == :group_concat
+          "#{function_name}(DISTINCT #{column_name} ORDER BY #{column_name})"
+        else
+          "#{function_name}(#{column_name})"
+        end
       end
 
     end # class DataObjectsAdapter

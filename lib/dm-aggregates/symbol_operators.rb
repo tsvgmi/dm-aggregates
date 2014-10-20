@@ -20,6 +20,10 @@ module DataMapper
       def sum
         DataMapper::Query::Operator.new(self, :sum)
       end
+
+      def group_concat
+        DataMapper::Query::Operator.new(self, :group_concat)
+      end
     end # module SymbolOperators
   end # module Aggregates
 end # module DataMapper
